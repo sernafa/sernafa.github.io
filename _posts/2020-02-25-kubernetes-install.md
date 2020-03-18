@@ -3,6 +3,8 @@ title:      "Kubernetes Cluster, instalación básica"
 date:       2020-02-25 11:00:04
 excerpt:    "Proceso de instalación de un cluster Kubernetes On-Prime"
 tags:       kubernetes cluster
+header:
+    teaser: /assets/images/kubernetes_teaser.png
 ---
 
 ## Instalación, configuración básica de los nodos del cluster

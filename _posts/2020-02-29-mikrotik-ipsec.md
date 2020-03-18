@@ -3,6 +3,8 @@ title:      "Mikrotik, configuración IPSec site-to-site"
 date:       2020-02-29 19:00:04
 excerpt:    "Proceso de configuración de un tunel IPSec site-to-site con routers Mikrotik"
 tags:       mikrotik network vpn ipsec
+header:
+    teaser: /assets/images/mikrotik_teaser.png
 ---
 
 La configuración de IPSec site-to-site descrita en el siguiente ejemplo, hace uso de la versión de mikrotik 6.46 o superior.  Las reglas del firewall son de ambito general, para cada instalación habria que realizar los ajustes necesarios.
