@@ -47,7 +47,7 @@ analytics:
 
 author:
   name             : "Sergio Navarro Fajardo"
-  avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
+  avatar           : "/assets/images/bio-photo.png"
   bio              : "SysAdmin Architect"
   location         : "Valencia, ES"
   email            :
