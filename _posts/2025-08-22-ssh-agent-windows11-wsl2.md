@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Making ssh-agent Persistent in Windows 11 WSL2 with Keychain"
-date:   2025-08-18 19:25:00 +0100
+date:   2025-08-22 19:25:00 +0100
 categories: Linux WSL
 tags: wsl2 windows ssh keychain
 ---
