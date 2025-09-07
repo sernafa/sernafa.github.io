@@ -2,7 +2,7 @@
 layout: post
 title: "Proxmox host loses default gateway on reboot"
 date: 2025-09-04 15:29
-category: Proxmox
+categories: Proxmox Networking
 tags: network linux
 ---
 
