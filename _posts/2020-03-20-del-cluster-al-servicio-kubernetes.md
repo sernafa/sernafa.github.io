@@ -498,7 +498,7 @@ Antes de actualizar Kubernetes debemos revisar la compatibilidad de Docker, Flan
 ```shell
 $ kubectl version --short
 $ kubeadm version -o short
-$ docker version --format '{{.Server.Version}}'
+{% raw %}$ docker version --format '{{.Server.Version}}'{% endraw %}
 ```
 
 ```text

@@ -1,5 +1,6 @@
 ---
 layout: page
+order: 4
 title: "About me"
 permalink: /about/
 image: /assets/img/about/about_profile.png
