@@ -33,7 +33,7 @@ ejercicio de *"vamos a meter Kubernetes en todo"*.
 
 El modelo actual es bastante sencillo:
 
-![Despliegue de Zabbix Proxy: ubicación remota → máquina virtual → Docker Compose → Zabbix Proxy.](/assets/img/posts/gitops-distribuido-zabbix-argocd/zabbix-proxy-docker-compose.png){: width="512" height="768" }
+![Despliegue de Zabbix Proxy: ubicación remota → máquina virtual → Docker Compose → Zabbix Proxy.](/assets/img/posts/gitops-distribuido-zabbix-argocd/zabbix-proxy-docker-compose.png){: width="384" height="576" }
 
 Y funciona.
 
@@ -107,7 +107,7 @@ Precisamente una de las cosas que queremos evitar.
 
 La arquitectura que tengo en mente se parece más a esto:
 
-![Arquitectura GitOps distribuida: los clientes A, B y N ejecutan K3s, argocd-agent y Zabbix Proxy e inician conexiones salientes hacia el plano de gestión con Argo CD y argocd-agent principal.](/assets/img/posts/gitops-distribuido-zabbix-argocd/arquitectura-gitops-distribuido.png)
+![Arquitectura GitOps distribuida: los clientes A, B y N ejecutan K3s, argocd-agent y Zabbix Proxy e inician conexiones salientes hacia el plano de gestión con Argo CD y argocd-agent principal.](/assets/img/posts/gitops-distribuido-zabbix-argocd/arquitectura-gitops-distribuido.png){: width="1152" height="768" }
 
 Es el entorno remoto quien inicia la conexión.
 
@@ -117,7 +117,7 @@ Y Git se convierte en el lugar donde describimos ese estado.
 
 ------------------------------------------------------------------------
 
-# ¿Por qué Kubernetes?
+## ¿Por qué Kubernetes?
 
 No creo que añadir Kubernetes convierta automáticamente una arquitectura
 en algo mejor.
@@ -147,7 +147,7 @@ bastante interesante para atacar nuestro problema original.
 
 ------------------------------------------------------------------------
 
-# Git como interfaz de operación
+## Git como interfaz de operación
 
 Supongamos que tenemos un cliente llamado `customer-a`.
 
@@ -162,7 +162,7 @@ docker compose up -d
 Lo que me gustaría conseguir es que el procedimiento operativo fuese
 algo parecido a:
 
-![Flujo de actualización GitOps: cambiar versión de imagen → commit → push → Argo CD detecta el cambio → el clúster remoto reconcilia → Zabbix Proxy actualizado.](/assets/img/posts/gitops-distribuido-zabbix-argocd/flujo-actualizacion-gitops.png){: width="512" height="768" }
+![Flujo de actualización GitOps: cambiar versión de imagen → commit → push → Argo CD detecta el cambio → el clúster remoto reconcilia → Zabbix Proxy actualizado.](/assets/img/posts/gitops-distribuido-zabbix-argocd/flujo-actualizacion-gitops.png){: width="384" height="576" }
 
 Sin SSH.
 
@@ -187,7 +187,7 @@ cambio en Git.
 
 ------------------------------------------------------------------------
 
-# Un repositorio por cliente
+## Un repositorio por cliente
 
 Una de las decisiones arquitectónicas que quería tomar desde el
 principio era cómo organizar los repositorios.
@@ -253,7 +253,7 @@ absolutamente nada en el cliente B.
 
 ------------------------------------------------------------------------
 
-# GitOps no significa eliminar la decisión humana
+## GitOps no significa eliminar la decisión humana
 
 No quiero construir un mecanismo que automáticamente actualice todos los
 proxies en cuanto aparezca una nueva versión de Zabbix.
@@ -276,7 +276,7 @@ ejecución manteniendo humana la decisión**.
 
 ------------------------------------------------------------------------
 
-# Una imagen personalizada de Zabbix Proxy
+## Una imagen personalizada de Zabbix Proxy
 
 Otra pieza del experimento será el propio contenedor.
 
@@ -301,7 +301,7 @@ Las diferencias deberían estar en la configuración.
 
 El ciclo de vida sería aproximadamente:
 
-![Flujo de distribución: imagen oficial Zabbix Proxy → GitHub Actions → imagen personalizada → GHCR → repositorios Git de clientes → Argo CD → clústeres remotos.](/assets/img/posts/gitops-distribuido-zabbix-argocd/flujo-imagen-personalizada-zabbix.png){: width="512" height="768" }
+![Flujo de distribución: imagen oficial Zabbix Proxy → GitHub Actions → imagen personalizada → GHCR → repositorios Git de clientes → Argo CD → clústeres remotos.](/assets/img/posts/gitops-distribuido-zabbix-argocd/flujo-imagen-personalizada-zabbix.png){: width="384" height="576" }
 
 Inicialmente tampoco veo necesario automatizar completamente esta parte.
 
@@ -321,7 +321,7 @@ debería ser el objetivo.
 
 ------------------------------------------------------------------------
 
-# El problema interesante: la conectividad
+## El problema interesante: la conectividad
 
 El modelo multi-clúster tradicional de Argo CD permite gestionar
 múltiples clústeres Kubernetes desde una instalación central.
@@ -364,20 +364,20 @@ nuestro requisito:
 
 Nuestra arquitectura empieza entonces a tomar esta forma:
 
-![El Agent del cliente remoto inicia una conexión saliente mTLS hacia Argo CD y Principal en el plano central. El cliente incluye Application Ctrl., Repo Server y Redis, con el flujo local hacia Kubernetes y Zabbix Proxy.](/assets/img/posts/gitops-distribuido-zabbix-argocd/conexion-mtls-cliente-remoto.png){: width="512" height="768" }
+![El Agent del cliente remoto inicia una conexión saliente mTLS hacia Argo CD y Principal en el plano central. El cliente incluye Application Ctrl., Repo Server y Redis, con el flujo local hacia Kubernetes y Zabbix Proxy.](/assets/img/posts/gitops-distribuido-zabbix-argocd/conexion-mtls-cliente-remoto.png){: width="384" height="576" }
 
 Esto se aproxima mucho más al modelo operacional que queremos conseguir.
 
 ------------------------------------------------------------------------
 
-# Un cliente, un proyecto, un destino
+## Un cliente, un proyecto, un destino
 
 En el plano central podemos representar cada cliente de forma
 independiente.
 
 Conceptualmente podríamos terminar teniendo:
 
-![Argo CD organiza una Application por cliente: Customer A usa el repositorio zabbix-proxy-customer-a y el destino customer-a; Customer B usa zabbix-proxy-customer-b y customer-b; Customer C usa zabbix-proxy-customer-c y customer-c.](/assets/img/posts/gitops-distribuido-zabbix-argocd/argocd-applications-clientes.png){: width="1536" height="1024" }
+![Argo CD organiza una Application por cliente: Customer A usa el repositorio zabbix-proxy-customer-a y el destino customer-a; Customer B usa zabbix-proxy-customer-b y customer-b; Customer C usa zabbix-proxy-customer-c y customer-c.](/assets/img/posts/gitops-distribuido-zabbix-argocd/argocd-applications-clientes.png){: width="1152" height="768" }
 
 De esta forma mantenemos separadas varias responsabilidades.
 
@@ -392,7 +392,7 @@ Y el agente permite llevar esa intención hasta el clúster remoto.
 
 ------------------------------------------------------------------------
 
-# Construyendo un pequeño laboratorio
+## Construyendo un pequeño laboratorio
 
 Todo el laboratorio será sintético.
 
@@ -401,7 +401,7 @@ clústeres K3s localmente.
 
 Nuestro pequeño universo tendrá tres clústeres:
 
-![Laboratorio GitOps: k3d-central contiene Argo CD y Principal. Los clústeres k3d-customer-a y k3d-customer-b contienen Agent, App Controller, Repo Server, Redis y Zabbix Proxy, y se conectan hacia el clúster central.](/assets/img/posts/gitops-distribuido-zabbix-argocd/laboratorio-k3d-gitops.png){: width="1536" height="1024" }
+![Laboratorio GitOps: k3d-central contiene Argo CD y Principal. Los clústeres k3d-customer-a y k3d-customer-b contienen Agent, App Controller, Repo Server, Redis y Zabbix Proxy, y se conectan hacia el clúster central.](/assets/img/posts/gitops-distribuido-zabbix-argocd/laboratorio-k3d-gitops.png){: width="1152" height="768" }
 
 No pretende ser una reproducción de producción.
 
@@ -424,9 +424,9 @@ mismo artículo.
 
 ------------------------------------------------------------------------
 
-# La PoC en cuatro actos
+## La PoC en cuatro partes
 
-## Acto 1 --- Levantar el plano de control
+### Parte 1 --- Levantar el plano de control
 
 Creamos:
 
@@ -441,7 +441,7 @@ Todavía no tenemos ningún workload de cliente.
 Simplemente queremos comprobar que nuestro plano de gestión funciona
 correctamente.
 
-## Acto 2 --- Conectar los clientes
+### Parte 2 --- Conectar los clientes
 
 Creamos:
 
@@ -457,7 +457,7 @@ Instalamos los componentes necesarios del lado del agente y comprobamos
 que son capaces de conectarse al principal utilizando conexiones
 iniciadas desde los clústeres remotos.
 
-## Acto 3 --- Desplegar los proxies
+### Parte 3 --- Desplegar los proxies
 
 Creamos dos Applications.
 
@@ -489,7 +489,7 @@ customer-b → Synced / Healthy
 
 Ese será nuestro punto de partida.
 
-## Acto 4 --- La prueba que realmente importa
+### Parte 4 --- La prueba que realmente importa
 
 Entramos únicamente en:
 
@@ -542,7 +542,7 @@ idea**.
 
 ------------------------------------------------------------------------
 
-# El rollback debería ser aburrido
+## El rollback debería ser aburrido
 
 El rollback no debería ser una operación especial.
 
@@ -565,7 +565,7 @@ probablemente no hemos solucionado realmente nuestro problema inicial.
 
 ------------------------------------------------------------------------
 
-# ¿Cuándo consideraré que la PoC funciona?
+## ¿Cuándo consideraré que la PoC funciona?
 
 Para mí, el criterio de éxito no es:
 
@@ -591,14 +591,53 @@ Al fin y al cabo, para eso sirve una PoC.
 
 ------------------------------------------------------------------------
 
-# Lo que deliberadamente no estamos resolviendo
+## Lo que deliberadamente no estamos resolviendo
 
 Hay varias cuestiones importantes que no quiero esconder debajo de la
 alfombra.
 
-La primera es probablemente la más evidente:
+### Rollback de versión y migraciones de SQLite
 
-**la gestión de secretos.**
+La primera tiene que ver con algo que antes he presentado como sencillo:
+**volver atrás**.
+
+Cambiamos el tag de la imagen, hacemos commit y dejamos que Argo CD
+reconcilie.
+
+Pero hay una pieza que no vuelve atrás con ese commit.
+
+**La base de datos.**
+
+Si la nueva versión del proxy ha aplicado migraciones sobre SQLite,
+volver a desplegar la imagen anterior no las deshace. La base de datos
+sigue en el estado que dejó la actualización.
+
+Y puede que la versión anterior ya no sepa trabajar con ella.
+
+Por tanto, aquí tenemos otra pregunta que resolver:
+
+> ¿Cómo volvemos a una versión anterior del proxy y nos aseguramos de
+> que puede seguir utilizando su base de datos?
+
+Podríamos explorar copias de seguridad coherentes antes de cada
+actualización y probar cómo restaurarlas cuando haga falta.
+
+Pero tampoco quiero dar por resuelto el problema simplemente por decir
+*"hacemos un backup"*.
+
+¿Qué ocurre con los datos que el proxy todavía no había enviado al
+servidor? ¿Cuáles perderíamos al recuperar esa copia? ¿Hemos probado
+realmente la restauración?
+
+Esa parte merece su propia prueba.
+
+No voy a resolverla en esta primera PoC, pero sí quiero dejarla señalada:
+**revertir el cambio en Git no basta para dar por resuelto el rollback
+si también ha cambiado la base de datos.**
+
+### Gestión de secretos
+
+Otra cuestión pendiente es **la gestión de secretos.**
 
 Un despliegue real de Zabbix Proxy puede necesitar una identidad PSK y
 su correspondiente material criptográfico.
@@ -632,7 +671,7 @@ Pero ninguna es necesaria para responder a nuestra pregunta inicial.
 
 ------------------------------------------------------------------------
 
-# Lo que realmente me interesa de este enfoque
+## Lo que realmente me interesa de este enfoque
 
 Lo que más me atrae de esta arquitectura no es Kubernetes.
 
@@ -642,13 +681,16 @@ Ni siquiera Zabbix.
 
 Lo interesante es el cambio en el **modelo operacional**.
 
-Pasamos de algo parecido a:
+La evolución sería la siguiente:
 
-![Operación manual: el técnico conecta con el Cliente A para actualizar y verificar, repite ambas tareas con el Cliente B y continúa con los demás clientes.](/assets/img/posts/gitops-distribuido-zabbix-argocd/operacion-manual-clientes.png){: width="512" height="768" }
-
-a:
-
-![El equipo de operación define en Git el estado deseado; la reconciliación GitOps lo aplica a los clientes A, B, C y demás destinos.](/assets/img/posts/gitops-distribuido-zabbix-argocd/operacion-gitops-clientes.png){: width="512" height="768" }
+<div style="display: flex; gap: 16px; align-items: flex-start; max-width: 784px; margin: 0 auto;">
+  <div style="flex: 1; min-width: 0;">
+    <img src="{{ '/assets/img/posts/gitops-distribuido-zabbix-argocd/operacion-manual-clientes.png' | relative_url }}" alt="Operación manual: el técnico conecta con el Cliente A para actualizar y verificar, repite ambas tareas con el Cliente B y continúa con los demás clientes." width="384" height="576" style="display: block; width: 100%; height: auto;" loading="lazy">
+  </div>
+  <div style="flex: 1; min-width: 0;">
+    <img src="{{ '/assets/img/posts/gitops-distribuido-zabbix-argocd/operacion-gitops-clientes.png' | relative_url }}" alt="El equipo de operación define en Git el estado deseado; la reconciliación GitOps lo aplica a los clientes A, B, C y demás destinos." width="384" height="576" style="display: block; width: 100%; height: auto;" loading="lazy">
+  </div>
+</div>
 
 El equipo humano sigue tomando las decisiones importantes.
 
@@ -669,7 +711,7 @@ reproducibles, trazables y consistentes**.
 
 ------------------------------------------------------------------------
 
-# ¿Estamos complicando algo que ya funcionaba?
+## ¿Estamos complicando algo que ya funcionaba?
 
 También creo que hay que hacerse esta pregunta.
 
@@ -686,7 +728,7 @@ empieza a cambiar.
 
 Especialmente cuando añadimos:
 
-![Factores que se suman a la complejidad operativa: número de instalaciones, diferentes métodos de acceso, restricciones de red, equipos mutualizados, necesidad de trazabilidad y ciclos de actualización frecuentes.](/assets/img/posts/gitops-distribuido-zabbix-argocd/factores-complejidad-operativa.png){: width="512" height="768" }
+![Factores que se suman a la complejidad operativa: número de instalaciones, diferentes métodos de acceso, restricciones de red, equipos mutualizados, necesidad de trazabilidad y ciclos de actualización frecuentes.](/assets/img/posts/gitops-distribuido-zabbix-argocd/factores-complejidad-operativa.png){: width="384" height="576" }
 
 En ese escenario merece la pena, como mínimo, hacer el experimento.
 
@@ -697,7 +739,7 @@ tenemos actualmente.
 
 ------------------------------------------------------------------------
 
-# Conclusiones
+## Conclusiones
 
 Todo esto empezó con un problema bastante cotidiano.
 
@@ -722,17 +764,17 @@ interesantes.
 
 La hipótesis es relativamente sencilla:
 
-![Ciclo GitOps con control humano: humano decide → Git describe → Argo distribuye → Kubernetes reconcilia → humano verifica.](/assets/img/posts/gitops-distribuido-zabbix-argocd/ciclo-gitops-control-humano.png){: width="512" height="768" }
+![Ciclo GitOps con control humano: humano decide → Git describe → Argo distribuye → Kubernetes reconcilia → humano verifica.](/assets/img/posts/gitops-distribuido-zabbix-argocd/ciclo-gitops-control-humano.png){: width="384" height="576" }
 
 Todavía quedan muchas preguntas.
+
+Backups.
 
 Secretos.
 
 Bootstrap.
 
 Observabilidad.
-
-Rollouts masivos.
 
 Propagación de templates.
 
@@ -747,6 +789,18 @@ Convertir esta arquitectura en algo reproducible, ejecutar la PoC y
 comprobar dónde nuestras suposiciones funcionan...
 
 ...y dónde no.
+
+**Esa será la segunda parte de esta serie.**
+
+En el próximo artículo entraré en la implementación de la PoC, paso a
+paso, con una serie de repositorios para que puedas reproducir el
+laboratorio en tu propio entorno de desarrollo.
+
+La idea es que puedas levantarlo, seguir el recorrido de un cambio en
+Git hasta el proxy y probar qué ocurre cuando actualizamos o intentamos
+volver atrás.
+
+Y, por supuesto, romper cosas y sacar tus propias conclusiones.
 
 Porque, personalmente, esa es una de las partes que más me interesan
 cuando exploro una tecnología nueva:

@@ -1,43 +1,47 @@
 ---
 layout: post
-title: "Proxmox host loses default gateway on reboot"
+title: "El nodo Proxmox pierde la puerta de enlace predeterminada al reiniciarse"
 date: 2025-09-04 15:29
-categories: Proxmox Networking
+categories: Proxmox Redes
 tags: network linux
 ---
 
-# The Problem
+# El problema
 
-When a Proxmox node boots and your **default route is missing** (but the management IP is there), you’ll usually see this in the logs:
+Cuando un nodo Proxmox arranca y **la ruta predeterminada no aparece**, aunque la dirección IP de gestión sí esté configurada, normalmente encontrarás este mensaje en los registros:
 
 ```text
 Error: Nexthop device is not up.
 ```
 
-### What’s actually going wrong
+### Qué está ocurriendo realmente
 
-On systems managed by **ifupdown2** with stacked interfaces (bond → bridge → VLAN), there’s a timing/race issue: the default route gets installed **before** the nexthop interface is fully up.  
-By default, ifupdown2 **delays slave state changes until the master changes**, which can leave the nexthop device “not up” at the moment the route is applied.
+En sistemas administrados mediante **ifupdown2** que utilizan interfaces apiladas (`bond` → puente → VLAN), puede producirse una condición de carrera: el sistema intenta instalar la ruta predeterminada **antes** de que la interfaz del siguiente salto esté completamente activa.
 
-### The straight-to-the-point fix
+De forma predeterminada, ifupdown2 **retrasa los cambios de estado de las interfaces subordinadas hasta que cambia el estado de la interfaz principal**. Como consecuencia, el dispositivo del siguiente salto puede seguir inactivo en el momento de aplicar la ruta.
 
-Tell ifupdown2 **not** to couple master/slave admin states. Set `link_master_slave=0`.
+### La solución directa
 
-1. Edit the config:
+Indica a ifupdown2 que **no vincule los estados administrativos de las interfaces principal y subordinadas**. Para ello, establece `link_master_slave=0`.
+
+1. Edita el archivo de configuración:
+
 ```text
 /etc/network/ifupdown2/ifupdown2.conf
 ```
 
-2. Add (or change) this line:
+2. Añade esta línea o modifica su valor si ya existe:
+
 ```text
 link_master_slave=0
 ```
 
-3. Reload networking:
+3. Reinicia el servicio de red:
+
 ```bash
 systemctl restart networking
 ```
 
-### Why this works
+### Por qué funciona
 
-With master/slave coupling disabled, lower devices (the “slaves”) come up independently and in time for the route installation. That removes the window where the kernel rejects the default route with “nexthop device is not up.”
+Al desactivar la vinculación entre la interfaz principal y las subordinadas, los dispositivos de nivel inferior pueden activarse de forma independiente y estar disponibles a tiempo para instalar la ruta. Así se elimina el intervalo durante el cual el kernel rechaza la ruta predeterminada con el mensaje `Nexthop device is not up`.
